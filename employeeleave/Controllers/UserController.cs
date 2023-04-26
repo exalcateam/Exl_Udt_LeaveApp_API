@@ -1,5 +1,6 @@
 ﻿using leaverequest.Datas;
 using leaverequest.Models;
+using leaverequest.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -8,68 +9,75 @@ namespace leaverequest.Controllers
     [Route("/api/[controller]/[action]")]
     public class UserController : Controller
     {
-       private readonly ApplicationDbcontext _dbcontext;
-        public UserController(ApplicationDbcontext dbcontext) 
+        private readonly IloginRepository _loginRepository;
+        
+        public UserController(IloginRepository loginRepository)
         {
-            _dbcontext= dbcontext;
+            _loginRepository = loginRepository;
         }
         [HttpPost]
         [ProducesResponseType(200)]
-        public ActionResult<login> create([FromBody] login log)
+        public async Task<IActionResult> Create(login login)
         {
-            _dbcontext.Login.Add(log);
-            _dbcontext.SaveChanges();
-            return Ok();
+            await _loginRepository.Create(login);
+            return Ok(login);
+
+
         }
         [HttpGet]
         [ProducesResponseType(200)]
-        public ActionResult <List<login>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return _dbcontext.Login.ToList();
+           var user= await _loginRepository.GetAll();
+            return Ok(user);
         }
         [HttpPost("authenticate")]
-        [ProducesResponseType(200)]
-        public ActionResult<login> Authenticate([FromBody] login log)
-        {
-            if(log == null) {
-                return BadRequest(); 
-            }
-           
-            var user=_dbcontext.Login.FirstOrDefault(x=>x.username==log.username && x.password==log.password);
-            if (user.username!=log.username && user.username!=log.username)
-            {
-                return NotFound();
-            }
-            /* return Ok(new { message = "login sucess" });*/
-            return Ok(user);
 
-        }   
-        [HttpDelete]
-        public ActionResult DeleteByid(int id)
+        public ActionResult <login> Authenticate([FromBody] login login)
         {
-            if (id == 0)
-            {
-                return BadRequest();
-            }
-            var user = _dbcontext.Login.Find(id);
-            if(user == null)
-            {
-                return NotFound();
-            }
-            _dbcontext.Login.Remove(user);
-            _dbcontext.SaveChanges();
-            return Ok();
+           return  _loginRepository.Authenticate(login);
+    
+
         }
-        [HttpPut]
+        [HttpPost("sendmail")]
+        public bool Sendmail(string body )
+        {
+            return _loginRepository.Sendmail(body);
+        }
+        /*  [HttpDelete]
+          public ActionResult DeleteByid(int id)
+          {
+              if (id == 0)
+              {
+                  return BadRequest();
+              }
+              var user = _dbcontext.Login.Find(id);
+              if(user == null)
+              {
+                  return NotFound();
+              }
+              _dbcontext.Login.Remove(user);
+              _dbcontext.SaveChanges();
+              return Ok();
+          }*/
+        /*[HttpPut]
         [ProducesResponseType(200)]
         public ActionResult<login> Update([FromBody] login log)
         {
             _dbcontext.Login.Update(log);
             _dbcontext.SaveChanges();
             return Ok(log);
+        }*/
+        [HttpPost("createform")]
+       
+        public async Task<IActionResult> Create([FromBody]leaveform leaveform)
+        {
+            await _loginRepository.Createform(leaveform);
+            return Ok(leaveform);
+
+
         }
-
-
+       
 
     }
 }
