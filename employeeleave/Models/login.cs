@@ -1,27 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace leaverequest.Models
 {
     public class login
     {
-        [Key]
-      
-      
-        public int Id { get; set; }
-        [Required]
-        public string username { get; set; }
-        [Required]
-        public string password { get; set; }
-        [Required]
-        public string EmailId { get; set; }
-        [Required]
-        public string DateofBirth { get; set; }
-        [Required]
-        public string Gender { get; set; }
-        [Required]
-        public string PhoneNumber { get; set; }
-        [Required]
-        public string JobRole { get; set; }
 
+        public int Id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string username { get; set; }
+      
+        public string password { get; set; }
+     
+        public string EmailId { get; set; }
+   
+        public string DateofBirth { get; set; }
+
+        public string Gender { get; set; }
+ 
+        public string PhoneNumber { get; set; }
+        public string Jobrole { get; set; }
     }
 }

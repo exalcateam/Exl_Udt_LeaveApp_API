@@ -11,6 +11,7 @@ namespace leaverequest.Datas
             
         }
         public DbSet<login> Login { get; set; }
-        
+        public DbSet<leaveform> Leaveform { get; set; }
+
     }
 }
